@@ -14,12 +14,15 @@
     "@cesium/engine": "^18.0.0",
     "@types/cesium": "^1.70.4",
     "cesium": "^1.130.0",
+    "leaflet": "^1.9.4",
     "pinia": "^3.0.3",
     "vite-plugin-cesium": "^1.2.23",
     "vue": "^3.5.13"
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.1",
+    "@types/geojson": "^7946.0.16",
+    "@types/leaflet": "^1.9.18",
     "@types/node": "^22.14.0",
     "@vitejs/plugin-vue": "^5.2.3",
     "@vue/tsconfig": "^0.7.0",
