@@ -1,14 +1,15 @@
 import { EngineType, LayerType, type LayerOptions, type LayerData, type ILayer } from "./types";
 import * as Cesium from "cesium";
-import L, { map } from "leaflet";
+import L from "leaflet";
 
 export interface IMapEngine<TMap = any> {
-    createLayer(type: LayerType, data: LayerData, options: LayerOptions): TMap;
     createMap(container: HTMLElement, options?: any): any;
+    createLayer(type: LayerType, data: LayerData, options: LayerOptions): TMap;
 }
 
 export class MapEngineFactory {
     static getEngine(type: EngineType): IMapEngine {
+        console.log(`Creating map engine for type: ${type}`);
         switch (type) {
             case EngineType.CESIUM:
                 return new CesiumMapEngine();
@@ -21,30 +22,38 @@ export class MapEngineFactory {
 }
 
 class CesiumMapEngine implements IMapEngine {
-    private viewer: Cesium.Viewer | null = null;
+    private _viewer: Cesium.Viewer | null = null;
+    private _readyPromise: Promise<void> | null = null;
 
     async createMap(container: HTMLElement, options?: any) {
-        const terrainProvider = await Cesium.CesiumTerrainProvider.fromIonAssetId(
-            1,
-            {
-                requestVertexNormals: true,
-            }
-        );
-        this.viewer = new Cesium.Viewer(container, {
-            terrainProvider: terrainProvider,
-            ...options
-        });
-        return this.viewer;
+        Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiOTc4YTk0OS04Yzc0LTQ0NGItYmQ5Mi1mZDRiNTcwOTVmODEiLCJpZCI6MTc1NTUyLCJpYXQiOjE2OTg5MDU3NjF9.VPB-f81rQRFA72amiP_ja9CZvP4uSfTqLc2zRXAMPzM';
+        this._readyPromise = (async ()=>{
+            const terrainProvider = await Cesium.CesiumTerrainProvider.fromIonAssetId(
+                1,
+                {
+                    requestVertexNormals: true,
+                }
+            );
+            this._viewer = new Cesium.Viewer(container, {
+                terrainProvider: terrainProvider,
+                infoBox: false,
+                ...options
+            });
+            
+        })();
+        return this._readyPromise?.then(() => this._viewer!);
     }
     
-    createLayer(type: LayerType, data: LayerData, options: LayerOptions): ILayer {
-        if (!this.viewer) {
+    async createLayer(type: LayerType, data: LayerData, options: LayerOptions): Promise<ILayer> {
+        if (!this._readyPromise) throw new Error("Call createMap first");
+        await this._readyPromise;
+        if (!this._viewer) {
             throw new Error("Viewer is not initialized. Call createMap first.");
         }
         switch (type) {
             case LayerType.GeoJSON:
                 console.log("Creating Cesium GeoJSON Layer");
-                return new CesiumGeoJsonLayer(this.viewer, data as GeoJSON.FeatureCollection, options);
+                return new CesiumGeoJsonLayer(this._viewer, data as GeoJSON.FeatureCollection, options);
             // 其他Cesium图层类型...
             default:
                 throw new Error(`Cesium unsupported layer type: ${type}`);
@@ -61,15 +70,18 @@ class LeafletMapEngine implements IMapEngine {
     
     createMap(container: HTMLElement, options?: any) {
         this.map = L.map(container, {
-            center: [0, 0],
-            zoom: 2,
-            ...options
+            // center: [45, 48],
+            zoom: 18,
+            // ...options
         });
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 2,
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        L.tileLayer('http://t0.tianditu.gov.cn/DataServer?T=vec_w&x={x}&y={y}&l={z}&tk=0c4bf211134dd7fce45d5be020eb7de7', {
+            tileSize: 256,
+            zoomOffset: 0,
+            maxZoom: 18
+            // attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(this.map);
+        this.map.setView([27.629216, 111.711649])
 
         return this.map;
     }
@@ -91,11 +103,11 @@ class LeafletMapEngine implements IMapEngine {
 
 class CesiumGeoJsonLayer implements ILayer {
     private dataSource: Cesium.GeoJsonDataSource | null = null;
-    private mapInstance: Cesium.Viewer | null = null;
 
     constructor(private readonly viewer: Cesium.Viewer, private data: GeoJSON.FeatureCollection, private options: LayerOptions) {}
 
     async addTo() {
+        console.log("Adding Cesium GeoJSON Layer");
         this.dataSource = await Cesium.GeoJsonDataSource.load(this.data, {
             stroke: Cesium.Color.HOTPINK,
             fill: Cesium.Color.PINK.withAlpha(0.5),
