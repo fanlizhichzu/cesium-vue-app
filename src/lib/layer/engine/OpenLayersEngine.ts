@@ -6,7 +6,6 @@ import { Style, Stroke, Fill, Circle } from 'ol/style';
 import { fromLonLat } from 'ol/proj';
 import { type LayerOptions, type ILayer, LayerType } from '../types';
 import { type IMapEngine } from '../IMapEngine';
-import OSM from 'ol/source/OSM';
 import TileLayer from 'ol/layer/Tile'
 import View from 'ol/View';
 import { XYZ } from 'ol/source';
@@ -20,7 +19,7 @@ export class OpenLayersMapEngine implements IMapEngine {
       layers: [
         new TileLayer({
           source: new XYZ({
-            url: 'http://t0.tianditu.gov.cn/DataServer?T=vec_w&x={x}&y={y}&l={z}&tk=0c4bf211134dd7fce45d5be020eb7de7',
+            url: 'http://t0.tianditu.gov.cn/DataServer?T=vec_w&x={x}&y={y}&l={z}&tk=332c51c337e6b2618bf95e421908e401',
             crossOrigin: "anoymous",
             wrapX: false
           })

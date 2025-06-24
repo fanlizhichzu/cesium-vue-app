@@ -1,27 +1,29 @@
 import { type LayerOptions, type ILayer, LayerType, type LayerData} from '../types';
 import { type IMapEngine } from '../IMapEngine';
 import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
 export class LeafletMapEngine implements IMapEngine {
     private map: L.Map | null = null;
 
-    createMap(container: HTMLElement, options?: any) {
-        this.map = L.map(container, {
-            center: [120, 30],
-            zoom: 5,
-            // ...options
-        });
+        createMap(container: HTMLElement, options?: any) {
+            this.map = L.map(container, {
+                center: [31.086444, 121.734942],
+                zoom: 4,
+                ...options
+            });
 
-        L.tileLayer('http://t0.tianditu.gov.cn/DataServer?T=vec_w&x={x}&y={y}&l={z}&tk=0c4bf211134dd7fce45d5be020eb7de7', {
-            tileSize: 256,
-            zoomOffset: 0,
-            maxZoom: 8
-            // attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(this.map);
-        this.map.setView([27.629216, 111.711649])
+            L.tileLayer('http://t0.tianditu.gov.cn/img_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=img&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&tk=332c51c337e6b2618bf95e421908e401', {
+                tileSize: 256,
+                zoomOffset: 0,
+                minZoom: 1,
+                maxZoom: 18,
+                // attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(this.map);
+            // this.map.setView([27.629216, 111.711649])
 
-        return this.map;
-    }
+            return this.map;
+        }
 
     createLayer(type: LayerType, data: LayerData, options: LayerOptions): ILayer {
         if (!this.map) {
