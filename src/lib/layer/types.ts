@@ -27,5 +27,6 @@ export enum LayerType {
 
 export enum EngineType {
     CESIUM = 'cesium',
-    LEAFLET = 'leaflet'
+    LEAFLET = 'leaflet',
+    OPENLAYERS = 'openlayers',
 }
