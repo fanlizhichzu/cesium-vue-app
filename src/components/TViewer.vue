@@ -13,7 +13,7 @@ import { ref } from 'vue';
 import MapViewer from './MapViewer.vue';
 import { EngineType, LayerType } from '../lib/layer/types';
 
-const currentEngine = ref(EngineType.LEAFLET);
+const currentEngine = ref(EngineType.CESIUM);
 const geoJsonData = ref({
   "type": "FeatureCollection",
   "features": [
