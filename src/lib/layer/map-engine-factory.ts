@@ -2,11 +2,7 @@ import { EngineType, LayerType, type LayerOptions, type LayerData } from "./type
 import { OpenLayersMapEngine } from "./engine/OpenLayersEngine";
 import { CesiumMapEngine } from "./engine/CesiumEngine";
 import { LeafletMapEngine } from "./engine/LeafLet";
-
-export interface IMapEngine<TMap = any> {
-    createMap(container: HTMLElement, options?: any): any;
-    createLayer(type: LayerType, data: LayerData, options: LayerOptions): TMap;
-}
+import { type IMapEngine } from "./engine/IMapEngine";
 
 export class MapEngineFactory {
     static getEngine(type: EngineType): IMapEngine {

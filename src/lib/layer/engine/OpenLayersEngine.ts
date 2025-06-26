@@ -5,7 +5,7 @@ import GeoJSON from 'ol/format/GeoJSON';
 import { Style, Stroke, Fill, Circle } from 'ol/style';
 import { fromLonLat } from 'ol/proj';
 import { type LayerOptions, type ILayer, LayerType } from '../types';
-import { type IMapEngine } from '../IMapEngine';
+import { type IMapEngine } from './IMapEngine';
 import TileLayer from 'ol/layer/Tile'
 import View from 'ol/View';
 import { XYZ } from 'ol/source';
@@ -46,6 +46,15 @@ export class OpenLayersMapEngine implements IMapEngine {
       default:
         throw new Error(`OpenLayers unsupported layer type: ${type}`);
     }
+  }
+
+  async addFlightTrack(options: { data: { longitude: number; latitude: number; height: number; }[]; startTime?: String | undefined; timeStep?: number | undefined; modelUri?: string | undefined; }): Promise<{
+    track: () => void;
+    remove: () => void;
+  }> {
+    // OpenLayers does not support 3D flight tracks natively like Cesium.
+    // You would need to implement custom logic to visualize flight paths.
+    throw new Error("Flight tracking is not implemented in OpenLayersMapEngine.");
   }
 }
 

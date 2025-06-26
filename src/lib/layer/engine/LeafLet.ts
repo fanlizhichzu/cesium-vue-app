@@ -1,5 +1,5 @@
 import { type LayerOptions, type ILayer, LayerType, type LayerData} from '../types';
-import { type IMapEngine } from '../IMapEngine';
+import { type IMapEngine } from './IMapEngine';
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -37,6 +37,20 @@ export class LeafletMapEngine implements IMapEngine {
             default:
                 throw new Error(`Leaflet unsupported layer type: ${type}`);
         }
+    }
+
+    async addFlightTrack(options: {
+        data: Array<{ longitude: number; latitude: number; height: number }>;
+        startTime?: String;
+        timeStep?: number;
+        modelUri?: string;
+    }): Promise<{
+        track: () => void;
+        remove: () => void;
+    }> {
+        // Leaflet does not support 3D flight tracks natively like Cesium.
+        // You would need to implement custom logic to visualize flight paths.
+        throw new Error("Flight tracking is not implemented in LeafletMapEngine.");
     }
 }
 

@@ -1,10 +1,22 @@
 <template>
     <div ref="mapContainer" class="map-container"></div>
+
+    <div class="control-panel">
+        <label>
+            <input 
+                type="checkbox"
+                v-model="showFlightTrack"
+                @change="toggleFlightTrack"
+            >
+            显示飞行轨迹
+        </label>
+    </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, type PropType, ref, onMounted, onBeforeUnmount, watch } from 'vue';
-import { MapEngineFactory, type IMapEngine } from '@/lib/layer/map-engine-factory';
+import { MapEngineFactory } from '@/lib/layer/map-engine-factory';
+import {type IMapEngine} from '@/lib/layer/engine/IMapEngine';
 import { LayerType, type LayerOptions, type LayerData, EngineType, type ILayer } from '@/lib/layer/types';
 
 export default defineComponent({
@@ -26,6 +38,10 @@ export default defineComponent({
         mapOptions: {
             type: Object,
             default: () => ({}),
+        },
+        flightData: {
+            type: Array<{longitude: number; latitude: number; height: number}>,
+            default: () => [],
         }
     },
     setup(props) {
@@ -33,11 +49,14 @@ export default defineComponent({
         const mapContainer = ref<HTMLElement>();
         let mapEngine: IMapEngine;
         let mapInstance: any;
+        let flightTrackController: any = null;
+
+        const showFlightTrack = ref(false);
 
         const currentLayers = new Map<String, ILayer>();
 
         // Initialize the map engine and layers
-        const initMap = () => {
+        const initMap = async () => {
             console.log("Map container:", mapContainer.value);
             console.log("Initializing map with engine:", props.engineType);
             if (!mapContainer.value) return;
@@ -54,6 +73,27 @@ export default defineComponent({
             });
         };
 
+        const toggleFlightTrack = async () => {
+            console.log("Toggling flight track visibility:", showFlightTrack.value);
+            if (!mapContainer.value) return;
+
+            if (showFlightTrack.value) {
+                 flightTrackController = await mapEngine.addFlightTrack({
+                    data: props.flightData,
+                    modelUri: 'Zv2eybVsGrYSwUFj_Cesium_Air.glb', // Cesium Ion资产ID
+                    startTime: '2020-06-25T23:10:00Z',
+                    timeStep: 30, // seconds
+                    playBackSpeed: 10, // playback speed multiplier
+                    showPath: true,
+                });
+
+                flightTrackController.track();
+            } else {
+                // 移除轨迹
+                flightTrackController?.remove();
+                flightTrackController = null;
+            }
+        }
         // destroy the map on unmount
         const destroyMap = () => {
             if (mapInstance) {
@@ -91,7 +131,7 @@ export default defineComponent({
             });
         }, { deep: true });
 
-        return { mapContainer };
+        return { mapContainer, showFlightTrack, toggleFlightTrack };
     }
 
 })
@@ -101,5 +141,17 @@ export default defineComponent({
 .map-container {
     width: 100%;
     height: 100%;
+}
+/* 控制面板样式 */
+.control-panel {
+  position: absolute; /* 绝对定位 */
+  top: 20px;
+  left: 20px;
+  z-index: 1000; /* 确保显示在最上层 */
+  background: rgba(255, 255, 255, 0.9);
+  padding: 12px 16px;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  font-family: Arial, sans-serif;
 }
 </style>
