@@ -12,6 +12,9 @@ export default defineConfig({
     vueDevTools(),
     cesium(),
   ],
+  optimizeDeps: {
+    include: ['cesium', 'olcs']
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))

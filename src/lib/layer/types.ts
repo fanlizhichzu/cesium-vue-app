@@ -1,32 +1,39 @@
-export interface LayerOptions {
+export interface UnifiedLayer {
     id: string;
-    name: string;
-    visible: boolean;
-    value: any; 
-    style?: any;
+    type: 'vector' | 'raster' | '3dtiles';
+    source: string | GeoJSON.FeatureCollection | any;
+    style?: layerStyle;
+    syncMode?: 'auto' | '2d' | '3d';
 }
 
-export interface ILayer {
-    addTo(): void;
-    remove() : void;
-    setVisible(visible: boolean): void;
-    updateData(data: any): void;
+export interface layerStyle {
+    color?: string;
+    opacity?: number;
+    strokeColor?: string;
+    strokeWidth?: number;
+    fillColor?: string;
+    fillOpacity?: number;
+    radius?: number; // For point layers
+    lineDash?: number[]; // For line layers
 }
 
-export type LayerData = GeoJSON.FeatureCollection | any[] | string | any;
-
-export enum LayerType {
-    GeoJSON = 'geojson',
-    WMS = 'wms',
-    TILESET = 'tileset',
-    KML = 'kml',
-    MARKER = 'marker',
-    POLYGON = 'polygon',
-    POLYLINE = 'polyline'
+export interface UnifiedViewState {
+    center: [number, number];
+    zoom: number;
+    height?: number; // 3D特有
+    rotation?: number;
 }
 
-export enum EngineType {
-    CESIUM = 'cesium',
-    LEAFLET = 'leaflet',
-    OPENLAYERS = 'openlayers',
+// 飞行轨迹配置
+export interface FlightTrackOptions {
+    path: Array<{lon: number, lat: number, height?: number}>;
+    modelUrl?: string;
+    speed?: number;
+  }
+  
+  // 轨迹控制器
+export interface FlightTrackController {
+    play(): void;
+    pause(): void;
+    remove(): void;
 }

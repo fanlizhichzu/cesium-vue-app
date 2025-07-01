@@ -1,157 +1,170 @@
 <template>
-    <div ref="mapContainer" class="map-container"></div>
+    <div class="map-container">
+        <!-- 地图容器 -->
+        <div ref="mapContainer" class="map-view"></div>
 
-    <div class="control-panel">
-        <label>
-            <input 
-                type="checkbox"
-                v-model="showFlightTrack"
-                @change="toggleFlightTrack"
-            >
-            显示飞行轨迹
-        </label>
+        <!-- 控制面板 -->
+        <div class="control-panel">
+            <button @click="toggleViewMode">
+                {{ is3D ? '切换到2D' : '切换到3D' }}
+            </button>
+        </div>
+
     </div>
 </template>
-
+  
 <script lang="ts">
-import { defineComponent, type PropType, ref, onMounted, onBeforeUnmount, watch } from 'vue';
-import { MapEngineFactory } from '@/lib/layer/map-engine-factory';
-import {type IMapEngine} from '@/lib/layer/engine/IMapEngine';
-import { LayerType, type LayerOptions, type LayerData, EngineType, type ILayer } from '@/lib/layer/types';
+import { defineComponent, ref, onMounted, onBeforeUnmount } from 'vue';
+import type { PropType } from 'vue'
+import UnifiedMapEngine from '@/lib/layer/engine/UnifiedMapEngine';
+// 定义坐标类型
+type Coordinate = [number, number];
 
 export default defineComponent({
     name: 'MapViewer',
     props: {
-        engineType: {
-            type: String as PropType<EngineType>,
-            default: EngineType.CESIUM,
-            validate: (value: string) => Object.values(EngineType).includes(value as EngineType)
+        center: {
+            type: Object as PropType<Coordinate>,
+            required: true,
+            validator: (value: unknown) => {
+                return Array.isArray(value) &&
+                    value.length === 2 &&
+                    typeof value[0] === 'number' &&
+                    typeof value[1] === 'number';
+            }
+        },
+        zoom: {
+            type: Number,
+            default: 10
         },
         layers: {
-            type: Array as PropType<Array<{
-                type: LayerType,
-                data: LayerData,
-                options: LayerOptions
-            }>>,
-            default: () => [],
-        },
-        mapOptions: {
-            type: Object,
-            default: () => ({}),
-        },
-        flightData: {
-            type: Array<{longitude: number; latitude: number; height: number}>,
-            default: () => [],
+            type: Array as () => Array<{
+                id: string;
+                type: string;
+                source: string | object;
+            }>,
+            default: () => []
         }
     },
     setup(props) {
-        console.log("MapViewer props:", props);
+        // 地图实例引用
         const mapContainer = ref<HTMLElement>();
-        let mapEngine: IMapEngine;
-        let mapInstance: any;
-        let flightTrackController: any = null;
+        const mapEngine = ref<UnifiedMapEngine>();
+        const is3D = ref(false);
 
-        const showFlightTrack = ref(false);
-
-        const currentLayers = new Map<String, ILayer>();
-
-        // Initialize the map engine and layers
+        // 初始化地图
         const initMap = async () => {
-            console.log("Map container:", mapContainer.value);
-            console.log("Initializing map with engine:", props.engineType);
             if (!mapContainer.value) return;
 
-            // Create the map engine instance
-            mapEngine = MapEngineFactory.getEngine(props.engineType);
-            mapEngine.createMap(mapContainer.value);
+            mapEngine.value = new UnifiedMapEngine();
+            await mapEngine.value.createMap(mapContainer.value);
 
-            // Add layers to the map
+            // 添加初始图层
             props.layers.forEach(async layer => {
-                const layerInstance = await mapEngine.createLayer(layer.type, layer.data, layer.options);
-                layerInstance.addTo();
-                currentLayers.set(layer.data.id, layerInstance);
+                await mapEngine.value?.addLayer(layer);
+            });
+
+            // 设置初始视图
+            setView({
+                center: props.center,
+                zoom: props.zoom
+            });
+
+            // 监听事件
+            mapEngine.value.on('click', handleMapClick);
+        };
+
+        // 切换二三维视图
+        const toggleViewMode = () => {
+            is3D.value = !is3D.value;
+            setView({
+                center: props.center,
+                zoom: props.zoom,
+                height: is3D.value ? 5000 : undefined
             });
         };
 
-        const toggleFlightTrack = async () => {
-            console.log("Toggling flight track visibility:", showFlightTrack.value);
-            if (!mapContainer.value) return;
+        // 设置视图
+        const setView = (config: {
+            center: [number, number];
+            zoom: number;
+            height?: number;
+        }) => {
+            mapEngine.value?.setView({
+                center: config.center,
+                zoom: config.zoom,
+                height: config.height
+            });
+        };
 
-            if (showFlightTrack.value) {
-                 flightTrackController = await mapEngine.addFlightTrack({
-                    data: props.flightData,
-                    modelUri: 'Zv2eybVsGrYSwUFj_Cesium_Air.glb', // Cesium Ion资产ID
-                    startTime: '2020-06-25T23:10:00Z',
-                    timeStep: 30, // seconds
-                    playBackSpeed: 10, // playback speed multiplier
-                    showPath: true,
-                });
+        // 地图点击事件处理
+        const handleMapClick = (event: any) => {
+            console.log('地图点击:', event);
+            // 可以在这里实现点击查询等功能
+        };
 
-                flightTrackController.track();
-            } else {
-                // 移除轨迹
-                flightTrackController?.remove();
-                flightTrackController = null;
-            }
-        }
-        // destroy the map on unmount
-        const destroyMap = () => {
-            if (mapInstance) {
-                currentLayers.forEach(layer => layer.remove());
-                currentLayers.clear();
-                // cesium specific cleanup
-                mapInstance?.destroy?.();
-                // leaflet specific cleanup
-                mapInstance?.remove?.();
-            }
-        }
-
-        onMounted(initMap);
-        onBeforeUnmount(destroyMap);
-
-        // Watch for changes of engineType prop
-        watch(() => props.engineType, () => {
-            destroyMap();
-            initMap();
+        // 组件挂载时初始化
+        onMounted(() => {
+            initMap().catch(console.error);
         });
 
-        // Watch for changes in layers prop
-        // 监听图层变化
-        watch(() => props.layers, (newLayers) => {
-            // 差异比较更新逻辑（简化版：全量更新）
-            currentLayers.forEach((_, id) => {
-                currentLayers.get(id)?.remove();
-                currentLayers.delete(id);
-            });
+        // 组件卸载时清理
+        onBeforeUnmount(() => {
+            mapEngine.value?.destroy();
+        });
 
-            newLayers.forEach(layer => {
-                const layerInstance = mapEngine.createLayer(layer.type, layer.data, layer.options);
-                layerInstance.addTo();
-                currentLayers.set(layer.options.id, layerInstance);
-            });
-        }, { deep: true });
 
-        return { mapContainer, showFlightTrack, toggleFlightTrack };
+        return {
+            mapContainer,
+            is3D,
+            toggleViewMode,
+        };
     }
-
-})
+});
 </script>
-
+  
 <style scoped>
 .map-container {
+    position: relative;
     width: 100%;
     height: 100%;
 }
-/* 控制面板样式 */
+
+.map-view {
+    width: 100%;
+    height: 100%;
+}
+
 .control-panel {
-  position: absolute; /* 绝对定位 */
-  top: 20px;
-  left: 20px;
-  z-index: 1000; /* 确保显示在最上层 */
-  background: rgba(255, 255, 255, 0.9);
-  padding: 12px 16px;
-  border-radius: 4px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  font-family: Arial, sans-serif;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+    border-radius: 4px;
+    display: flex;
+    gap: 8px;
+}
+
+.control-panel button {
+    padding: 6px 12px;
+    background: #1976d2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.measurement-result {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    z-index: 1000;
 }
 </style>

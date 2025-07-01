@@ -1,22 +1,17 @@
-import { EngineType, LayerType, type LayerOptions, type LayerData } from "./types";
-import { OpenLayersMapEngine } from "./engine/OpenLayersEngine";
-import { CesiumMapEngine } from "./engine/CesiumEngine";
-import { LeafletMapEngine } from "./engine/LeafLet";
-import { type IMapEngine } from "./engine/IMapEngine";
+import UnifiedMapEngine from './UnifiedMapEngine';
 
 export class MapEngineFactory {
-    static getEngine(type: EngineType): IMapEngine {
-        console.log(`Creating map engine for type: ${type}`);
-        switch (type) {
-            case EngineType.CESIUM:
-                return new CesiumMapEngine();
-            case EngineType.LEAFLET:
-                return new LeafletMapEngine();
-            case EngineType.OPENLAYERS:
-                return new OpenLayersMapEngine();
-            default:
-                throw new Error(`Unsupported engine type: ${type}`);
-        }
-    }
-}
+  private static instance: IMapEngine;
 
+  static getEngine(): IMapEngine {
+    if (!this.instance) {
+      this.instance = new UnifiedMapEngine();
+    }
+    return this.instance;
+  }
+
+  static destroyEngine() {
+    this.instance?.destroy();
+    this.instance = null;
+  }
+}
