@@ -11,19 +11,19 @@ import { MapManager } from '../map/mapManager';
 export default defineComponent({
   name: 'MapComponent',
   setup() {
-    const mapManager = ref<MapManager | null>(null);
+    let mapManager: MapManager;
 
     const toggle3D = () => {
-      if (mapManager.value) {
-        mapManager.value.toggle3DView();
+      if (mapManager) {
+        mapManager.toggle3DView();
       }
     };
 
     onMounted(async () => {
       await nextTick();
       console.log('Initializing MapManager...');
-      mapManager.value = new MapManager('mapCesium');
-      await mapManager.value.initCesiumMap();
+      mapManager = new MapManager('mapCesium');
+      await mapManager.initCesiumMap();
       
       // 示例：添加更多图层
       // mapManager.value.add2DLayer('tile', new OSM());
@@ -31,8 +31,8 @@ export default defineComponent({
     });
 
     onUnmounted(() => {
-      if (mapManager.value) {
-        mapManager.value.destroy();
+      if (mapManager) {
+        mapManager.destroy();
       }
     });
 
