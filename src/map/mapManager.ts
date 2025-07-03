@@ -19,13 +19,13 @@ export class MapManager {
         console.log('Cesium map initialized', this.cesiumMap);
     }
 
-    toggle3DView(enabled: boolean): void {
+    toggle3DView(): void {
         console.log('olMap', this.olMap);
         console.log('cesiumMap', this.cesiumMap);
         if (!this.olMap || !this.cesiumMap) {
             throw new Error("Maps are not initialized.");
         }
-        this.cesiumMap.enable3D(enabled);
+        this.cesiumMap.enable3D();
     }
 
     add2DLayer(type: 'tile' | 'image', source: any, options: any): void {

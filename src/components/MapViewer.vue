@@ -4,7 +4,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, onUnmounted, ref } from 'vue';
+import { defineComponent, onMounted, onUnmounted, ref, nextTick} from 'vue';
 import 'ol/ol.css';
 import { MapManager } from '../map/mapManager';
 
@@ -12,15 +12,15 @@ export default defineComponent({
   name: 'MapComponent',
   setup() {
     const mapManager = ref<MapManager | null>(null);
-    const is3d = ref(false);
 
     const toggle3D = () => {
       if (mapManager.value) {
-        mapManager.value.toggle3DView(!is3d.value);
+        mapManager.value.toggle3DView();
       }
     };
 
     onMounted(async () => {
+      await nextTick();
       console.log('Initializing MapManager...');
       mapManager.value = new MapManager('mapCesium');
       await mapManager.value.initCesiumMap();

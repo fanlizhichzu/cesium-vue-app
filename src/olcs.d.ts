@@ -1,14 +1,14 @@
-declare module 'olcs' {
-    import { Map } from 'ol';
-    import { Viewer } from 'cesium';
+// declare module 'olcs' {
+//     import { Map } from 'ol';
+//     import { Viewer } from 'cesium';
   
-    class OLCesium {
-      constructor(options: {
-        map: Map;
-        timeFunction?: () => any;
-      });
-      dispose(): void;
-    }
+//     class OLCesium {
+//       constructor(options: {
+//         map: Map;
+//         time?: () => any;
+//       });
+//       dispose(): void;
+//     }
   
-    export default OLCesium;
-  }
+//     export default OLCesium;
+//   }

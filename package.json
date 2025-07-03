@@ -13,10 +13,10 @@
   "dependencies": {
     "@cesium/engine": "^18.0.0",
     "@types/cesium": "^1.70.4",
-    "cesium": "^1.130.0",
+    "cesium": "^1.123.0",
     "leaflet": "^1.9.4",
     "lodash-es": "^4.17.21",
-    "ol": "^10.6.1",
+    "ol": "^10.2.1",
     "olcs": "^2.22.1",
     "pinia": "^3.0.3",
     "vite-plugin-cesium": "^1.2.23",

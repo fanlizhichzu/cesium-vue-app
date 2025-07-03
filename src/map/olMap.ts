@@ -2,33 +2,44 @@ import Map from 'ol/Map';
 import View from 'ol/View';
 import ImageLayer from 'ol/layer/Image';
 import TileLayer from 'ol/layer/Tile';
-import { OSM, ImageWMS } from 'ol/source';
+import { ImageWMS, XYZ } from 'ol/source';
+import {defaults as olControlDefaults} from 'ol/control.js';
 
 export class OLMap {
     private map: Map;
     constructor(target: string) {
         const imageWMSSource = new ImageWMS({
-            url: 'https://ahocevar.com/geoserver/wms',
+            url: 'http://192.168.100.189:8080/geoserver/wms',
             params: {
                 'LAYERS': 'topp:states',
             },
             ratio: 1,
+            crossOrigin: 'anonymous',
         });
 
         this.map = new Map({
             layers: [
                 new TileLayer({
-                    source: new OSM(),
-                }),
-                new ImageLayer({
-                    extent: [-13884991, 2870341, -7455066, 6338219],
-                    source: imageWMSSource,
-                }),
+                    source: new XYZ({
+                      url: 'http://t0.tianditu.gov.cn/DataServer?T=vec_w&x={x}&y={y}&l={z}&tk=332c51c337e6b2618bf95e421908e401',
+                      crossOrigin: "anoymous",
+                      wrapX: false
+                    })
+                  }),
+                // new ImageLayer({
+                //     extent: [-13884991, 2870341, -7455066, 6338219],
+                //     source: imageWMSSource,
+                // }),
             ],
+            controls: olControlDefaults({
+                attributionOptions: {
+                    collapsible: false
+                }
+            }),
             target,
             view: new View({
                 center: [-10967567.978507737, 4204193.972847062],
-                zoom: 3,
+                zoom: 2,
             }),
         });
     }
