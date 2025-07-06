@@ -9,7 +9,7 @@ export class OLMap {
     private map: Map;
     constructor(target: string) {
         const imageWMSSource = new ImageWMS({
-            url: 'http://192.168.100.189:8080/geoserver/wms',
+            url: 'https://ahocevar.com/geoserver/wms',
             params: {
                 'LAYERS': 'topp:states',
             },
@@ -26,10 +26,10 @@ export class OLMap {
                       wrapX: false
                     })
                   }),
-                // new ImageLayer({
-                //     extent: [-13884991, 2870341, -7455066, 6338219],
-                //     source: imageWMSSource,
-                // }),
+                new ImageLayer({
+                    extent: [-13884991, 2870341, -7455066, 6338219],
+                    source: imageWMSSource,
+                }),
             ],
             controls: olControlDefaults({
                 attributionOptions: {

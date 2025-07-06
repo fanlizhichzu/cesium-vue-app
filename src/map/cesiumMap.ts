@@ -9,10 +9,6 @@ export class CesiumMap {
     private viewer: any;
 
     constructor(olMap: Map) {
-        this.initialize(olMap);
-    }
-
-    private async initialize(olMap: Map) {
         window.Cesium = Cesium;
         this.ol3d = new OLCesium({
             map: olMap,
@@ -25,6 +21,10 @@ export class CesiumMap {
         console.log(this.ol3d.getEnabled());
     }
 
+    private async initialize(olMap: Map) {
+        
+    }
+
     setEnabled() {
         this.ol3d.setEnabled();
     }
@@ -32,7 +32,6 @@ export class CesiumMap {
     enable3D(): void {
         this.ol3d.setEnabled(!this.ol3d.getEnabled());
         console.log(this.ol3d.getEnabled());
-        this.ol3d.getCesiumScene().synchronize();
     }
 
     add3dTiles(url: string, options: any): void {
