@@ -34,14 +34,13 @@ export class CesiumMap {
         console.log(this.ol3d.getEnabled());
     }
 
-    add3dTiles(url: string, options: any): void {
+    add3dTiles(options: any): void {
         if (!this.viewer) {
             throw new Error("Cesium viewer is not initialized.");
         }
 
         this.viewer.scene.primitives.add(
             new Cesium.Cesium3DTileset({
-                url,
                 ...options
             })
         );
@@ -52,6 +51,9 @@ export class CesiumMap {
             this.ol3d.setEnabled(false);
         }
     }
+
+    removeLayer(layer: any): void {}
+    
 
 
 }

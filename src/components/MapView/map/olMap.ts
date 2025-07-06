@@ -4,6 +4,7 @@ import ImageLayer from 'ol/layer/Image';
 import TileLayer from 'ol/layer/Tile';
 import { ImageWMS, XYZ } from 'ol/source';
 import {defaults as olControlDefaults} from 'ol/control.js';
+import type { WMSLayerOptions } from '@/types/WMSLayerOptions';
 
 export class OLMap {
     private map: Map;
@@ -26,10 +27,10 @@ export class OLMap {
                       wrapX: false
                     })
                   }),
-                new ImageLayer({
-                    extent: [-13884991, 2870341, -7455066, 6338219],
-                    source: imageWMSSource,
-                }),
+                // new ImageLayer({
+                //     extent: [-13884991, 2870341, -7455066, 6338219],
+                //     source: imageWMSSource,
+                // }),
             ],
             controls: olControlDefaults({
                 attributionOptions: {
@@ -48,12 +49,27 @@ export class OLMap {
         return this.map;
     }
 
-    addTileLayer(source: any, options: any): void {
+    addTileLayer(options: any): void {
         const tileLayer = new TileLayer({
-            source: source,
             ...options,
         });
         this.map.addLayer(tileLayer);
+    }
+
+    addWMSLayer(options: WMSLayerOptions) {
+        const imageWMSSource = new ImageWMS({
+            url: options?.url,
+            params: {
+                'LAYERS': options.name,
+            },
+            ratio: 1,
+            crossOrigin: 'anonymous',
+        });
+        const wmsLayer = new ImageLayer({
+            source: imageWMSSource,
+            ...options,
+        })
+        this.map.addLayer(wmsLayer);
     }
 
     addImageLayer(source: any, options: any): void {
@@ -62,6 +78,10 @@ export class OLMap {
             ...options,
         });
         this.map.addLayer(imageLayer);
+    }
+
+    removeLayer(layer: any): void {
+        this.map.removeLayer(layer);
     }
 
     destroy(): void {

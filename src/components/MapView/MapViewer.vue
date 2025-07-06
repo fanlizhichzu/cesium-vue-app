@@ -1,16 +1,22 @@
 <template>
-  <div id="mapCesium" class="map"></div>
+  <div id="mapCesium" class="mapCesium"></div>
   <button id="enable" @click="toggle3D" class="toggle-button">Toggle 3D</button>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, onUnmounted, ref, nextTick} from 'vue';
-import 'ol/ol.css';
-import { MapManager } from '../map/mapManager';
+import { defineComponent, onMounted, onUnmounted, ref } from 'vue';
+import { MapManager } from '@/components/MapView/map/mapManager';
+import {type LayerOptions} from '@/types/LayerTypes';
 
 export default defineComponent({
   name: 'MapComponent',
-  setup() {
+  props: {
+    layerOptions: {
+      type: Array as () => LayerOptions[],
+      default: () => []
+    }
+  }, 
+  setup(props) {
     let mapManager: MapManager;
 
     const toggle3D = () => {
@@ -20,14 +26,15 @@ export default defineComponent({
     };
 
     onMounted(async () => {
-      await nextTick();
       console.log('Initializing MapManager...');
       mapManager = new MapManager('mapCesium');
       await mapManager.initCesiumMap();
-      
+
       // 示例：添加更多图层
-      // mapManager.value.add2DLayer('tile', new OSM());
-      // mapManager.value.add3DLayer('path/to/3d/tileset.json');
+      props.layerOptions.forEach((layer) => {
+        mapManager.addLayer(layer);
+      });
+
     });
 
     onUnmounted(() => {
@@ -42,7 +49,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.map {
+.mapCesium {
   width: 100%;
   height: 100vh;
 }
