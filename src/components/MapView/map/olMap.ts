@@ -24,7 +24,7 @@ export class OLMap {
                     source: new XYZ({
                       url: 'http://t0.tianditu.gov.cn/DataServer?T=vec_w&x={x}&y={y}&l={z}&tk=332c51c337e6b2618bf95e421908e401',
                       crossOrigin: "anoymous",
-                      wrapX: false
+                      wrapX: true
                     })
                   }),
                 // new ImageLayer({

@@ -23,9 +23,9 @@ export default defineComponent({
         {
           id: '1212121',
           type: 'wms',
-          name: 'topp:states',
-          url: 'https://ahocevar.com/geoserver/wms',
-          title: 'state',
+          name: 'ne:countries',
+          url: 'http://117.72.46.51:8000/geoserver/ne/wms',
+          title: 'contry',
         }
       ]
     });
