@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import CesiumViewer from './components/CesiumViewer.vue'
 import TViewer from './components/TViewer.vue';
 </script>
 
