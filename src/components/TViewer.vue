@@ -38,8 +38,9 @@ export default defineComponent({
     const data: TreeNode[] = [
       {
         id: 1,
-        label: '一级 111111111111111111111111111111111111111111111111111111111',
+        label: '一级 111111111111111111111111111111111111',
         type: 'department',
+        icon: 'Edit',
         children: [
           {
             id: 4,

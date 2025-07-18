@@ -6,8 +6,12 @@
         :lazy = "props.lazy"
         node-key="id"
         highlight-current
+        show-checkbox
         @node-click = "handleNodeClick"
     >
+    <template #default="{ node, data }">
+      <TreeNodeContent :node="node" :data="data" />
+    </template>
     </el-tree>
 </template>
 
@@ -17,6 +21,9 @@ import {useTree} from '@/composables/useTree';
 
 import {type PropType } from "vue";
 import {type TreeNode} from '@/types/treeTypes';
+import TreeNodeContent from './TreeNodeContent.vue';
+
+
 
 const props = defineProps({
         data: {

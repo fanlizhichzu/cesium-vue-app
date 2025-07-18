@@ -9,6 +9,8 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     BasicTree: typeof import('./src/components/Tree/BasicTree.vue')['default']
+    ElIcon: typeof import('element-plus/es')['ElIcon']
+    ElTag: typeof import('element-plus/es')['ElTag']
     ElTree: typeof import('element-plus/es')['ElTree']
     IconCommunity: typeof import('./src/components/icons/IconCommunity.vue')['default']
     IconDocumentation: typeof import('./src/components/icons/IconDocumentation.vue')['default']
@@ -16,6 +18,7 @@ declare module 'vue' {
     IconSupport: typeof import('./src/components/icons/IconSupport.vue')['default']
     IconTooling: typeof import('./src/components/icons/IconTooling.vue')['default']
     MapViewer: typeof import('./src/components/MapView/MapViewer.vue')['default']
+    TreeNodeContent: typeof import('./src/components/Tree/TreeNodeContent.vue')['default']
     TViewer: typeof import('./src/components/TViewer.vue')['default']
   }
 }
