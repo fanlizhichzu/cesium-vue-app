@@ -1,4 +1,11 @@
 import type { TreeNode } from '@/types/treeTypes';
+import request from '@/utils/request'; 
+
+export const getList = async (): Promise<TreeNode[]> => {
+    const data = request.get('/tree/list');
+    console.log('getList:', data);
+    return [];
+}
 
 export const fetchTreeData = async (): Promise<TreeNode[]> => {
     // 模拟异步数据获取

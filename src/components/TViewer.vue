@@ -1,6 +1,6 @@
 <template>
   <div class="app">
-    <BasicTree :data="data" :default-props="defaultProps" :lazy="false" @node-click="handleNodeClick" />
+    <BasicTree :data="data" :default-props="defaultProps" :lazy="true" @node-click="handleNodeClick" />
     <MapViewer :layerOptions="layers" />
   </div>
 </template>

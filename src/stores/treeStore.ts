@@ -12,6 +12,7 @@ export const useTreeStore = defineStore("tree", {
         async loadTreeData() {
             this.loading = true;
             try {
+                console.log('Loading tree data...');
                 this.treeData = await fetchTreeData();
             } finally {
                 this.loading = false;
