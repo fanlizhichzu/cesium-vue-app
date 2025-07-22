@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import type { TreeNode } from "@/types/treeTypes";
-import {fetchTreeData} from "@/api/treeApi";
+import {fetchTreeData, getList} from "@/api/treeApi";
 
 export const useTreeStore = defineStore("tree", {
     state: () => ({
@@ -13,7 +13,7 @@ export const useTreeStore = defineStore("tree", {
             this.loading = true;
             try {
                 console.log('Loading tree data...');
-                this.treeData = await fetchTreeData();
+                this.treeData = await getList();
             } finally {
                 this.loading = false;
             }

@@ -2,7 +2,7 @@ import type { TreeNode } from '@/types/treeTypes';
 import request from '@/utils/request'; 
 
 export const getList = async (): Promise<TreeNode[]> => {
-    const data = request.get('/tree/list');
+    const data = request.get('/mapLayerDirectory/list');
     console.log('getList:', data);
     return [];
 }
