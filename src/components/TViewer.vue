@@ -1,73 +1,47 @@
 <template>
   <div class="app">
-    <BasicTree :data="data" :default-props="defaultProps" :lazy="true" @node-click="handleNodeClick" />
+    <BasicTree :data="treeData" :default-props="defaultProps" :lazy="false" @node-click="handleNodeClick" />
     <MapViewer :layerOptions="layers" />
   </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import MapViewer from '@/components/MapView/MapViewer.vue';
 import BasicTree from './Tree/BasicTree.vue';
-import { defineComponent, onMounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { type LayerOptions } from '@/types/LayerTypes';
 import type { TreeNode } from '@/types/treeTypes';
+import { useTree } from '@/composables/useTree';
 
-export default defineComponent({
-  components: {
-    MapViewer
-  },
-  setup() {
-    const layers = ref<LayerOptions[]>([]);
+const layers = ref<LayerOptions[]>([]);
+const treeData = ref<TreeNode[]>([]);
 
-    onMounted(() => {
-      layers.value = [
-        {
-          id: '1212121',
-          type: 'wms',
-          name: 'ne:countries',
-          url: 'http://117.72.46.51:8000/geoserver/ne/wms',
-          title: 'contry',
-        }
-      ]
-    });
+const { loadTreeData, treeStore } = useTree();
 
-    const handleNodeClick = (data: TreeNode) => {
-      console.log(data)
+onMounted(async () => {
+  // Initialize tree data
+  await loadTreeData();
+  treeData.value = treeStore.treeData;
+
+  layers.value = [
+    {
+      id: '1212121',
+      type: 'wms',
+      name: 'ne:countries',
+      url: 'http://117.72.46.51:8000/geoserver/ne/wms',
+      title: 'contry',
     }
-
-    const data: TreeNode[] = [
-      {
-        id: 1,
-        label: '一级 111111111111111111111111111111111111',
-        type: 'department',
-        icon: 'Edit',
-        children: [
-          {
-            id: 4,
-            label: '二级 1-1',
-            type: 'department',
-            children: [
-              { id: 9, label: '三级 1-1-1', type: 'user', status: 'online' },
-              { id: 10, label: '三级 1-1-2', type: 'user', status: 'offline' }
-            ]
-          }
-        ]
-      }
-    ]
-
-    const defaultProps = {
-      children: 'children',
-      label: 'label',
-    }
-
-    return {
-      layers,
-      data,
-      defaultProps,
-      handleNodeClick
-    };
-  }
+  ]
 });
+
+const handleNodeClick = (data: TreeNode) => {
+  console.log(data)
+}
+
+const defaultProps = {
+  children: 'children',
+  label: 'label',
+}
 </script>
 
 <style>

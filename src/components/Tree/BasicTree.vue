@@ -2,9 +2,9 @@
     <el-tree
         :data = "props.data"
         :props = "props.defaultProps"
-        :load = "loadData"
+        :load = "props.loadData"
         :lazy = "props.lazy"
-        node-key="id"
+        node-key = props.nodekey
         highlight-current
         show-checkbox
         @node-click = "handleNodeClick"
@@ -17,13 +17,9 @@
 
 <script lang="ts" setup>
 
-import {useTree} from '@/composables/useTree';
-
 import {type PropType } from "vue";
 import {type TreeNode} from '@/types/treeTypes';
 import TreeNodeContent from './TreeNodeContent.vue';
-
-
 
 const props = defineProps({
         data: {
@@ -40,19 +36,30 @@ const props = defineProps({
                     isLeaf: 'isLeaf'
                 }
             }
+        },
+        loadData: {
+            type: Function as PropType<(node: TreeNode, resolve: (data: TreeNode[]) => void) => void>,
+            default: () => {
+                return (node: TreeNode, resolve: (data: TreeNode[]) => void) => {
+                    // Default loadData function does nothing
+                    resolve([]);
+                }
+            }
+        },
+        nodekey: {
+            type: String,
+            default: 'id'
         }
     });
 
     const emit = defineEmits({
         'node-click': (node: TreeNode) => true,
-    })
+    });
 
-const {loadData, getCurrentNode, setCurrentNode, handleNodeClick} = useTree(props, emit);
+    const handleNodeClick = (node: TreeNode) => {
+        emit('node-click', node);
+    }
 
-defineExpose({
-    getCurrentNode,
-    setCurrentNode
-});
 </script>
 
 <style scoped>

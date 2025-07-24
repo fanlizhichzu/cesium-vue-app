@@ -78,7 +78,7 @@ class Request {
     }
 
     // GET 请求
-    public get<T = any>(url: string, params?: any, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
+    public get<T = any>(url: string, params?: any, config?: AxiosRequestConfig): Promise<T> {
         return this.instance.get(url, { params, ...config });
     }
 

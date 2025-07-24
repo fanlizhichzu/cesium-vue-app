@@ -2,26 +2,11 @@ import { defineProps, defineEmits, type PropType } from "vue";
 import type { TreeNode } from "@/types/treeTypes";
 import { useTreeStore } from "@/stores/treeStore";
 
-export function useTree(
-    props: {
-        data: TreeNode[];
-        lazy: boolean;
-        defaultProps: Record<string, any>;
-      },
-      emit: any
-) {
+export function useTree() {
 
     const treeStore = useTreeStore();
 
-    const handleNodeClick = (node: TreeNode) => {
-        emit('node-click', node);
-    }
-
     const loadData = async (node: TreeNode, resolve: (data: TreeNode[]) => void) => {
-        if (node.level ===0){
-            resolve(props.data);
-            return;
-        }
     
         try {
             await treeStore.loadTreeData();
@@ -32,17 +17,24 @@ export function useTree(
         }
     }
 
+    const loadTreeData = async () => {
+        try {
+            await treeStore.loadTreeData();
+        } catch (error) {
+            console.error('Error loading tree data:', error);
+        }
+    }
+
     const getCurrentNode = () => treeStore.getCurrentNode();
     
     const setCurrentNode = (node: TreeNode | null) => treeStore.setCurrentNode(node);
 
     return {
-        emit,
         treeStore,
-        handleNodeClick,
         loadData,
         getCurrentNode,
-        setCurrentNode
+        setCurrentNode,
+        loadTreeData
     };
 
 }
