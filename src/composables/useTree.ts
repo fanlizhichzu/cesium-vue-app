@@ -19,7 +19,7 @@ export function useTree() {
 
     const loadTreeData = async () => {
         try {
-            await treeStore.loadTreeData();
+            await treeStore.buildTree();
         } catch (error) {
             console.error('Error loading tree data:', error);
         }

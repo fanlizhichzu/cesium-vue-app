@@ -8,6 +8,7 @@ export interface TreeNode {
     type?: 'department' | 'user' | 'device';
     status?: 'online' | 'offline';
     level?: number; 
+    parentId?: string | number; // 用于标识父节点
 }
 
 // 示例数据

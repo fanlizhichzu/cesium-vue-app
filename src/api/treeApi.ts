@@ -1,7 +1,7 @@
 import type { TreeNode } from '@/types/treeTypes';
 import request from '@/utils/request';
 
-export const getList = async (): Promise<TreeNode[]> => {
+export const getDirectoryList = async (): Promise<TreeNode[]> => {
     const data = await request.get('/mapLayerDirectory/list');
     console.log('getList:', data);
 
@@ -15,7 +15,23 @@ export const getList = async (): Promise<TreeNode[]> => {
     }));
 
     return treeNodes;
+}
 
+export const getLayerList = async (): Promise<TreeNode[]> => {
+    const data = await request.get('/mapLayer/list');
+    console.log('getList:', data);
+
+    const treeNodes: TreeNode[] = data.map((item: any) => ({
+        id: item.id,
+        label: item.layerTitle,
+        parentId: item.layerParent,
+        type: "user", 
+        children: item.children || [],
+        isLeaf: item.isLeaf ?? false,
+        level: item.level ?? 0,
+    }));
+
+    return treeNodes;
 }
 
 export const fetchTreeData = async (): Promise<TreeNode[]> => {

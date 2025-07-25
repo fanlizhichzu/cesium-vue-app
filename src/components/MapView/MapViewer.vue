@@ -6,7 +6,8 @@
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, ref } from 'vue';
 import { MapManager } from '@/components/MapView/map/mapManager';
-import {type LayerOptions} from '@/types/LayerTypes';
+import { type LayerOptions } from '@/types/LayerTypes';
+import { watch } from 'vue';
 
 export default defineComponent({
   name: 'MapComponent',
@@ -15,7 +16,7 @@ export default defineComponent({
       type: Array as () => LayerOptions[],
       default: () => []
     }
-  }, 
+  },
   setup(props) {
     let mapManager: MapManager;
 
@@ -30,6 +31,8 @@ export default defineComponent({
       mapManager = new MapManager('mapCesium');
       await mapManager.initCesiumMap();
 
+      console.log("layerOptions:", props.layerOptions);
+
       // 示例：添加更多图层
       props.layerOptions.forEach((layer) => {
         mapManager.addLayer(layer);
@@ -42,6 +45,20 @@ export default defineComponent({
         mapManager.destroy();
       }
     });
+
+    // 监听 layerOptions 的变化
+    watch(
+      () => props.layerOptions,
+      (newLayers) => {
+        console.log('Layer options changed:', newLayers);
+        if (newLayers.length > 0) {
+          props.layerOptions.forEach((layer) => {
+            mapManager.addLayer(layer);
+          });
+        }
+      },
+      { immediate: true } // 立即触发一次
+    );
 
     return { toggle3D };
   },
@@ -66,7 +83,7 @@ export default defineComponent({
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .toggle-button:hover {
