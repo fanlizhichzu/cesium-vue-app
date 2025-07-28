@@ -7,6 +7,7 @@
         node-key = props.nodekey
         highlight-current
         show-checkbox
+        empty-text = ""
         @node-click = "handleNodeClick"
     >
     <template #default="{ node, data }">
