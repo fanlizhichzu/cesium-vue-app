@@ -1,8 +1,8 @@
 // src/map/layers/olTileLayer.ts
-import { type BaseLayer, type LayerOptions } from '../../../types/LayerTypes';
+import { type BaseLayerOption, type LayerOptions } from '../../../types/LayerTypes';
 import { OLMap } from '../map/olMap';
 
-export class OLImageLayer implements BaseLayer {
+export class OLImageLayer implements BaseLayerOption {
   private layer: any;
   
   constructor(

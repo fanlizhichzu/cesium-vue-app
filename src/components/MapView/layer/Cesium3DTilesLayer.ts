@@ -1,8 +1,8 @@
 // src/map/layers/olTileLayer.ts
-import { type BaseLayer, type LayerOptions } from '../../../types/LayerTypes';
+import { type BaseLayerOption, type LayerOptions } from '../../../types/LayerTypes';
 import { CesiumMap } from '../map/cesiumMap';
 
-export class Cesium3DTilesLayer implements BaseLayer {
+export class Cesium3DTilesLayer implements BaseLayerOption {
   private layer: any;
   
   constructor(

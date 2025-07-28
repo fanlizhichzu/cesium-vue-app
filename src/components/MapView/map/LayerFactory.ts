@@ -1,5 +1,5 @@
 // src/map/layerFactory.ts
-import { type BaseLayer, type LayerOptions, isWMSLayer, is3DTilesLayer} from '../../../types/LayerTypes';
+import { type BaseLayerOption, type LayerOptions, isWMSLayer, is3DTilesLayer} from '../../../types/LayerTypes';
 import { OLMap } from './olMap';
 import { CesiumMap } from './cesiumMap';
 import { OLTileLayer } from '../layer/OLTileLayer';
@@ -15,7 +15,7 @@ export interface LayerFactory {
 export class OLMapLayerFactory implements LayerFactory {
   constructor(private olMap: OLMap) {}
 
-  createLayer(options: LayerOptions): BaseLayer | undefined {
+  createLayer(options: LayerOptions): BaseLayerOption | undefined {
       if (isWMSLayer(options)) {
         return new OLWMSLayer(this.olMap, options);
       }
@@ -25,7 +25,7 @@ export class OLMapLayerFactory implements LayerFactory {
 export class CesiumLayerFactory implements LayerFactory {
   constructor(private cesiumMap: CesiumMap) {}
 
-  createLayer(options: LayerOptions): BaseLayer | undefined {
+  createLayer(options: LayerOptions): BaseLayerOption | undefined {
     if (is3DTilesLayer(options)) {
       return new Cesium3DTilesLayer(this.cesiumMap, options);
     }

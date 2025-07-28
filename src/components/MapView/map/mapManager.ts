@@ -1,7 +1,7 @@
 import { OLMap } from '@/components/MapView/map/olMap';
 import { CesiumMap } from '@/components/MapView/map/cesiumMap';
 import { OLMapLayerFactory, CesiumLayerFactory } from './LayerFactory';
-import { type BaseLayer } from '@/types/LayerTypes';
+import { type BaseLayerOption } from '@/types/LayerTypes';
 import { type LayerOptions } from '@/types/LayerTypes';
 
 export class MapManager {
@@ -9,7 +9,7 @@ export class MapManager {
     private cesiumMap: CesiumMap | null = null;
     private olLayerFactory: OLMapLayerFactory | null = null;
     private cesiumLayerFactory: CesiumLayerFactory | null = null;
-    private layers: Map<string, BaseLayer> = new Map();
+    private layers: Map<string, BaseLayerOption> = new Map();
 
     constructor(target: string) {
         console.log('Initializing MapManager with target:', target);
@@ -46,7 +46,7 @@ export class MapManager {
             return;
         }
 
-        let layer: BaseLayer | undefined;
+        let layer: BaseLayerOption | undefined;
         
         if (options.type === '3d-tiles' || options.type === '3d-model') {
             if (!this.cesiumLayerFactory) {

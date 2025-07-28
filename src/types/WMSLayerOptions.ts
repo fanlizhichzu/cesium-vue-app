@@ -1,5 +1,5 @@
-import { type BaseLayer } from './BaseLayerOptions';
-export interface WMSLayerOptions extends BaseLayer {
+import { type BaseLayerOption } from './BaseLayerOptions';
+export interface WMSLayerOptions extends BaseLayerOption {
     version?: string; // WMS版本
     format?: string; // 图像格式
     layers?: string[]; // 图层名称列表

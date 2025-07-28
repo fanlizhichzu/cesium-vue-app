@@ -5,10 +5,11 @@ export interface TreeNode {
     icon?: string;
     disabled?: boolean;
     isLeaf?: boolean;
-    type?: 'department' | 'user' | 'device';
+    type?: 'department' | 'user' | 'device' | 'wms' | '3dtiles';
     status?: 'online' | 'offline';
     level?: number; 
     parentId?: string | number; // 用于标识父节点
+    config? : any;
 }
 
 // 示例数据

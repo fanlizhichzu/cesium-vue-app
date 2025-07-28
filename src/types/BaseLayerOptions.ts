@@ -1,4 +1,4 @@
-export interface BaseLayer {
+export interface BaseLayerOption {
     /**
      * 主键
      */
