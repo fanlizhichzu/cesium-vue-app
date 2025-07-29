@@ -17,32 +17,46 @@ export interface BaseLayer {
   updateOptions(options: LayerOptions): void;
 }
 
-export function createLayerOptions(layerNode: TreeNode): LayerOptions {
+export function createLayerOptions(layerNodes: TreeNode[]): LayerOptions[] {
+  const layerOptions: LayerOptions[] = [];
+  
+  layerNodes.forEach(node => {
+    const layerOption = createLayerOption(node);
+    if (layerOption) {
+      layerOptions.push(layerOption);
+    }
+    
+  })
 
-  const config = layerNode.config || {};
+  return layerOptions;
+}
+
+export function createLayerOption(layerNode: TreeNode): LayerOptions | undefined {
+
+  console.log('Creating layer option for node:', layerNode);
+  const config = layerNode.config ? JSON.parse(layerNode.config) : {};
 
   const baseLayerOption : BaseLayerOption = {
     id: layerNode.id.toString(),
+    type: config.type || 'unknown',
     title: layerNode.label,
-    type: layerNode.type || 'unknown',
+
     name: layerNode.label,
     url: config.url || '',
     visible: true,
     opacity: 1.0,
     zIndex: 0,
-    projection: 'EPSG:4326',
-    minZoom: 0,
-    maxZoom: 18,
+    // projection: 'EPSG:4326',
+    // minZoom: 0,
+    // maxZoom: 18,
   }
 
-  if (layerNode.type === 'wms') {
-    
+  if (baseLayerOption.type === 'wms') {
     return {
       ...baseLayerOption,
     } as WMSLayerOptions;
   }
 
-  throw new Error(`Unsupported layer type: ${layerNode.type}`);
 }
 
 // 类型守卫函数

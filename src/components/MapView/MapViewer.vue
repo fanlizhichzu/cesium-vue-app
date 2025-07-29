@@ -30,14 +30,6 @@ export default defineComponent({
       console.log('Initializing MapManager...');
       mapManager = new MapManager('mapCesium');
       await mapManager.initCesiumMap();
-
-      console.log("layerOptions:", props.layerOptions);
-
-      // 示例：添加更多图层
-      props.layerOptions.forEach((layer) => {
-        mapManager.addLayer(layer);
-      });
-
     });
 
     onUnmounted(() => {
@@ -48,16 +40,22 @@ export default defineComponent({
 
     // 监听 layerOptions 的变化
     watch(
-      () => props.layerOptions,
-      (newLayers) => {
-        console.log('Layer options changed:', newLayers);
+      () => [...props.layerOptions], // 创建新数组确保触发
+      (newLayers, oldLayers) => {
+        console.log('Layer options changed - new:', newLayers);
+        console.log('Layer options changed - old:', oldLayers);
+
         if (newLayers.length > 0) {
-          props.layerOptions.forEach((layer) => {
+          // 先清除所有现有图层
+          // mapManager.removeAllLayers();
+
+          // 添加新图层
+          newLayers.forEach(layer => {
             mapManager.addLayer(layer);
           });
         }
       },
-      { immediate: true } // 立即触发一次
+      { deep: true } // 添加 deep 监听
     );
 
     return { toggle3D };
