@@ -1,6 +1,6 @@
 <template>
   <div class="app">
-    <BasicTree :data="treeStore.treeData" :default-props="defaultProps" :lazy="false" @node-click="handleNodeClick" />
+    <BasicTree :data="treeStore.treeData" :default-props="defaultProps" :lazy="false" @node-click="handleNodeClick" :nodekey="id" />
     <MapViewer :layerOptions="treeStore.layers" />
   </div>
 </template>
@@ -12,6 +12,7 @@ import { onMounted, ref, computed, watch, nextTick} from 'vue';
 import type { TreeNode } from '@/types/treeTypes';
 import { useTree } from '@/composables/useTree';
 
+const id = ref('id'); // 用于标识树节点的唯一键
 
 const { loadTreeData, treeStore } = useTree();
 

@@ -4,7 +4,7 @@
         :props = "props.defaultProps"
         :load = "props.loadData"
         :lazy = "props.lazy"
-        node-key = props.nodekey
+        :node-key = "props.nodekey"
         highlight-current
         show-checkbox
         empty-text = ""
@@ -49,7 +49,7 @@ const props = defineProps({
         },
         nodekey: {
             type: String,
-            default: 'id'
+            default: "id"
         }
     });
 
